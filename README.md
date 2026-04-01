@@ -23,11 +23,17 @@ It requires ```phunk```
 3. Initialization via ```sHG1G2``` (citation needed)
 
 ### Installation
+Using ```pip```
+
+```
+pip install socca-tune
+```
+
+or by cloning the repository
 ```
 git clone https://github.com/astrockers/socca-tune
 cd socca-tune
 pip install -e .
-
 ```
 
 ### Quick example
