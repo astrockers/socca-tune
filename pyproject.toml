@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "socca-tune"
+version = "0.1.0"
+description = "SOCCA - TechniqUe for iNitial parameter Estimation"
+authors = ["Odysseas Xenos <odysseas.xenos@proton.me>"]
+license = "MIT"
+
+packages = [{ include = "socca-tune" }]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+numpy = "*"
+scipy = "*"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
