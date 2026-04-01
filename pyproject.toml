@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "socca-tune"
+name = "socca_tune"
 version = "0.1.0"
 description = "SOCCA - TechniqUe for iNitial parameter Estimation"
 authors = ["Odysseas Xenos <odysseas.xenos@proton.me>"]
 license = "MIT"
 
-packages = [{ include = "socca-tune" }]
+packages = [{ include = "socca_tune" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8"
