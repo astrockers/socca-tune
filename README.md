@@ -45,7 +45,7 @@ import io
 
 Let's pick an example SSO, in this case (624) Hektor.
 We can get the observations of Hektor from ZTF using the FINK alert broker's API, arguably the easiest method to collect sparse SSO photometry.
-For more info on FINK, [clich here](https://fink-broker.org/)
+For more info on FINK, [click here](https://fink-broker.org/)
 
 ```
 target = "Hektor"
@@ -132,3 +132,7 @@ socca_vals = {
 for key in rock_vals:
     print(f"{key:<10} {rock_vals[key]:19.6f} {socca_vals[key]:19.6f}")
 ```
+
+We can also take a look at what the data look like vs the model we just computed. Notice how the size of the lightcurve grows as our line of sight goes closer to the asteroid's equator!
+
+![Hektor-SOCCA](gfx/Hektor-SOCCA.png)
