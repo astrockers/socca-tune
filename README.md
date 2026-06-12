@@ -14,13 +14,12 @@ It requires ```phunk```
 3. Spin axis orientation ($\alpha, \delta$)
 4. Shape (triaxial ellipsoid: $a/b, a/c$)
 
-- Works with sparse, irregularly sampled photometry
+- Works with sparse, irregularly sampled photometry thanks to [nifty](https://github.com/flatironinstitute/nifty-ls)!
 - Multi-band fitting
-- Scalable to large datasets (survey-ready)
 - Built-in:
 1. Period search (Lomb–Scargle + model selection)
 2. Period alias and bogus flagging 
-3. Initialization via ```sHG1G2``` (citation needed)
+3. Initialization via ```sHG1G2``` ([Carry+2024](https://ui.adsabs.harvard.edu/abs/2024A%26A...687A..38C/abstract))
 
 ### Installation
 Using ```pip```
@@ -38,9 +37,37 @@ pip install -e .
 
 ### Quick example
 ```
-from socca-tune.initialize import initialize 
+from socca_tune.initialize import initialize 
 import phunk
+import requests
+import io
+```
 
+Let's pick an example SSO, in this case (624) Hektor.
+We can get the observations of Hektor from ZTF using the FINK alert broker's API, arguably the easiest method to collect sparse SSO photometry.
+For more info on FINK, [clich here](https://fink-broker.org/)
+
+```
+target = "Hektor"
+
+# get data for target
+r = requests.post(
+    "https://api.ztf.fink-portal.org/api/v1/sso",
+    json={
+        "n_or_d": f"{target}",
+        "withEphem": True,
+        "withResiduals": True,
+        "output-format": "json",
+    },
+)
+
+# Format output in a DataFrame
+data = pd.read_json(io.BytesIO(r.content))
+```
+
+We can now load the different columns as provided from FINK into a ```PhaseCurve``` object and do an ephemeris call to collect auxiliary information required by SOCCA (such as the sub-Solar coordinates of our target.)
+
+```
 pc = phunk.PhaseCurve(
     target=target,
     epoch=data["Date"],
@@ -64,9 +91,7 @@ The fitting process is staged to avoid local minima:
 
 - Period search
 1. Lomb–Scargle on ```sHG1G2``` residuals
-2. Harmonics and aliases flagging
-3. Bootstrap stability test for bogus flagging
-4. Correction for the synodic-sideral period difference
+2. Correction for the synodic-sideral period difference
 
 - Full SOCCA fit on the spin axis minima and selected trial periods
 
@@ -81,3 +106,29 @@ with
 $$g(\gamma) = -2.5\log_{10}(G_1\phi_1(\gamma) + G_2\phi_2(\gamma) + (1-G_1-G_2)\phi_3(\gamma))$$
 and the function $s$
 which models the photometric variation coming from the projection of a spinning triaxial ellipsoid.
+
+After the fit is done, we can compare our solution with values from the bibliography (if they exist) using [SSODNet](https://ui.adsabs.harvard.edu/abs/2023A%26A...671A.151B/abstract).
+
+```
+import rocks
+
+rock = rocks.Rock(target)
+
+print(f"{'Parameter':<13} {'rocks':>12} {'SOCCA':>19}")
+print("-" * 50)
+
+rock_vals = {
+    "RA": rock.parameters.physical.spin.RA0.value[0],
+    "DEC": rock.parameters.physical.spin.DEC0.value[0],
+    "Period": rock.parameters.physical.spin.period.value[0],
+}
+
+socca_vals = {
+    "RA": pc.SOCCA.alpha,
+    "DEC": pc.SOCCA.delta,
+    "Period": pc.SOCCA.period * 24,
+}
+
+for key in rock_vals:
+    print(f"{key:<10} {rock_vals[key]:19.6f} {socca_vals[key]:19.6f}")
+```
