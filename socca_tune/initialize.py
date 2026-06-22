@@ -136,7 +136,8 @@ def initialize(
     Pmax = period_sy + W
 
     period_scan = np.linspace(Pmin, Pmax, N)
-
+    period_scan = period_scan[period_scan > 0]
+    
     if not np.isclose(period_scan, period_sy).any():
         period_scan = np.sort(np.append(period_scan, period_sy))
 
