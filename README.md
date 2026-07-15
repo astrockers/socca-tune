@@ -22,18 +22,23 @@ It requires ```phunk```
 3. Initialization via ```sHG1G2``` ([Carry+2024](https://ui.adsabs.harvard.edu/abs/2024A%26A...687A..38C/abstract))
 
 ### Installation
-Using ```pip```
 
+Before using ```socca-tune``` you will need the latest version of ```phunk```:
 ```
-pip install socca-tune
+git clone git clone https://github.com/astrockers/phunk.git
+cd phunk
+pip install -e .
 ```
 
-or by cloning the repository
+And then:
 ```
 git clone https://github.com/astrockers/socca-tune
 cd socca-tune
 pip install -e .
 ```
+
+You might also need to update the ssoCards from SsoDNET with ```rocks status```
+and by choosing option ```2```
 
 ### Quick example
 ```
